@@ -6,11 +6,17 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:09:12 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 13:31:33 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 20:34:47 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+void	ft_abort(t_data *data)
+{
+	sem_post(data->stop_sem);
+	exit(EXIT_FAILURE);
+}
 
 static long	ft_elapsed_time(t_philo *philo)
 {
@@ -41,12 +47,6 @@ static void	ft_write_state_debug(t_ps state, t_philo *philo)
 	else if (state == DIED)
 		printf("%6ld | Philo No.%d (ID %d) died\n",
 			ft_elapsed_time(philo), philo->id + 1, philo->id);
-}
-
-void	ft_abort(t_data *data)
-{
-	sem_post(data->stop_sem);
-	exit(EXIT_FAILURE);
 }
 
 void	ft_write_state(t_ps state, t_philo *philo)
