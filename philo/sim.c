@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 11:25:17 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 12:14:15 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 18:05:15 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,15 +76,13 @@ static int	ft_start_threads(t_data *data)
 				&data->philo[i]))
 		{
 			ft_mutex_set(&data->state_mutex, &data->end_sim, 1);
-			perror("philo: pthread_create failed");
-			return (1);
+			return (ft_error("philo: pthread_create failed\n", 1));
 		}
 	}
 	if (pthread_create(&data->monitor, NULL, ft_monitor, data))
 	{
 		ft_mutex_set(&data->state_mutex, &data->end_sim, 1);
-		perror("philo: pthread_create failed");
-		return (1);
+		return (ft_error("philo: pthread_create failed\n", 1));
 	}
 	return (0);
 }

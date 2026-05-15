@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:09:06 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 12:27:08 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 18:46:21 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	ft_sem_remove(sem_t *sem, const char *sem_name);
 
 // utils_bonus.c
 long	ft_atol_s(const char *nptr);
-void	ft_error(const char *err_msg);
+int		ft_error(const char *err_msg, int exit_code);
 long	ft_get_time(t_tc time_code);
 void	ft_usleep(long sleep_time, t_data *data);
 void	ft_cleanup(t_data *data);

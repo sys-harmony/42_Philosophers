@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 13:34:45 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/14 21:02:19 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 18:25:41 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,15 @@ static int	ft_parse_input(t_data *data, char *argv[])
 		data->max_meals = ft_atol_s(argv[5]);
 	if (data->philo_nbr < 0 || data->time_to_die < 0 || data->time_to_eat < 0
 		|| data->time_to_sleep < 0 || data->max_meals < 0)
-	{
-		ft_error("philo_bonus: arguments must be positive integers or zero\n");
-		return (2);
-	}
+		return (ft_error("philo_bonus: arguments must be "
+				"positive integers or zero\n", 2));
 	if (!argv[5])
 		data->max_meals = -1;
 	data->think_time
 		= (data->time_to_die - data->time_to_eat - data->time_to_sleep) / 3;
 	if (!data->philo_nbr || !data->max_meals)
-	{
-		ft_error("philo_bonus: simulation cannot proceed with zero "
-			"philosophers or a maximum meal count of zero\n");
-		return (3);
-	}
+		return (ft_error("philo_bonus: simulation cannot proceed with zero "
+				"philosophers or a maximum meal count of zero\n", 3));
 	return (0);
 }
 
@@ -50,10 +45,7 @@ static int	ft_sem_init(t_data *data)
 	if (data->forks_sem == SEM_FAILED
 		|| data->write_sem == SEM_FAILED
 		|| data->stop_sem == SEM_FAILED)
-	{
-		perror("philo_bonus: sem_open failed");
-		return (1);
-	}
+		return (ft_error("philo_bonus: sem_open failed\n", 1));
 	return (0);
 }
 
@@ -77,7 +69,7 @@ static int	ft_philo_init(t_data *data)
 		sem_unlink(name);
 		data->philo[i].lock_sem = sem_open(name, O_CREAT, 0644, 1);
 		if (data->philo[i].lock_sem == SEM_FAILED)
-			return (perror("philo_bonus: sem_open failed"), 1);
+			return (ft_error("philo_bonus: sem_open failed\n", 1));
 	}
 	return (0);
 }
@@ -87,10 +79,7 @@ static int	ft_data_init(t_data *data)
 	data->pid = malloc(sizeof(pid_t) * data->philo_nbr);
 	data->philo = malloc(sizeof(t_philo) * data->philo_nbr);
 	if (!data->pid || !data->philo)
-	{
-		perror("philo_bonus: malloc failed");
-		return (1);
-	}
+		return (ft_error("philo_bonus: malloc failed\n", 1));
 	if (ft_sem_init(data) || ft_philo_init(data))
 		return (1);
 	return (0);
@@ -103,12 +92,9 @@ int	main(int argc, char *argv[])
 	int		ret;
 
 	if (argc < 5 || argc > 6)
-	{
-		ft_error("Usage : ./philo number_of_philosophers "
-			"time_to_die time_to_eat time_to_sleep "
-			"[number_of_times_each_philosopher_must_eat]\n");
-		return (2);
-	}
+		return (ft_error("Usage : ./philo_bonus number_of_philosophers "
+				"time_to_die time_to_eat time_to_sleep "
+				"[number_of_times_each_philosopher_must_eat]\n", 2));
 	data = (t_data){0};
 	exit_code = EXIT_SUCCESS;
 	ret = ft_parse_input(&data, argv);

@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:08:52 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 11:22:50 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 18:14:40 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ long	ft_atol_s(const char *nptr)
 	return ((long)res);
 }
 
-void	ft_error(const char *err_msg)
+int	ft_error(const char *err_msg, int exit_code)
 {
 	size_t	len;
 
 	len = 0;
 	while (err_msg[len])
 		len++;
-	if (write(2, err_msg, len) < 0)
-		perror("philo_bonus: write failed");
+	write(2, err_msg, len);
+	return (exit_code);
 }
 
 long	ft_get_time(t_tc time_code)
@@ -51,10 +51,7 @@ long	ft_get_time(t_tc time_code)
 	struct timeval	tv;
 
 	if (gettimeofday(&tv, NULL) < 0)
-	{
-		perror("philo_bonus: gettimeofday failed");
-		return (-1);
-	}
+		return (ft_error("philo_bonus: gettimeofday failed\n", -1));
 	else if (time_code == MILLISECOND)
 		return ((tv.tv_sec * 1e3) + tv.tv_usec / 1e3);
 	else if (time_code == MICROSECOND)

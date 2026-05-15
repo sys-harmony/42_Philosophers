@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 13:34:54 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 12:26:42 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 18:46:11 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ long	ft_sim_is_over(t_data *data);
 
 // utils.c
 long	ft_atol_s(const char *nptr);
-void	ft_error(const char *err_msg);
+int		ft_error(const char *err_msg, int exit_code);
 long	ft_get_time(t_tc time_code, t_data *data);
 void	ft_usleep(long sleep_time, t_data *data);
 void	ft_cleanup(t_data *data);

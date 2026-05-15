@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:08:57 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 12:27:35 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 18:35:09 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,6 @@ static void	ft_eat(t_philo *philo)
 
 	sem_wait(philo->data->forks_sem);
 	ft_write_state(TAKING_FIRST_FORK, philo);
-	if (philo->data->philo_nbr == 1)
-	{
-		ft_usleep(philo->data->time_to_die + 1000, philo->data);
-		sem_post(philo->data->forks_sem);
-		return ;
-	}
 	sem_wait(philo->data->forks_sem);
 	last_meal_time = ft_get_time(MILLISECOND);
 	if (last_meal_time < 0)
@@ -71,7 +65,7 @@ static int	ft_start_processes(t_data *data)
 		data->pid[i] = fork();
 		if (data->pid[i] == -1)
 		{
-			perror("philo_bonus: fork failed");
+			ft_error("philo_bonus: fork failed\n", 1);
 			while (i--)
 				kill(data->pid[i], SIGKILL);
 			return (1);
