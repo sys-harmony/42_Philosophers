@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:08:57 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 20:50:31 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 20:54:33 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	ft_dinner(t_philo *philo)
 	d = philo->data;
 	ft_sem_set(philo->lock_sem, &philo->last_meal_time, d->start_time);
 	if (pthread_create(&philo->thread, NULL, ft_monitor, philo))
-		exit(EXIT_FAILURE);
+		ft_abort(philo->data);
 	pthread_detach(philo->thread);
 	if (philo->id % 2)
 		usleep(500);
