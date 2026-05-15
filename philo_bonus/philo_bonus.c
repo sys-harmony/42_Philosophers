@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 13:34:45 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 18:25:41 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 19:09:57 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,11 @@ static int	ft_parse_input(t_data *data, char *argv[])
 		data->max_meals = -1;
 	data->think_time
 		= (data->time_to_die - data->time_to_eat - data->time_to_sleep) / 3;
+	if (data->philo_nbr > 1000)
+		return (ft_error("philo_bonus: too many philosophers\n", 2));
 	if (!data->philo_nbr || !data->max_meals)
-		return (ft_error("philo_bonus: simulation cannot proceed with zero "
-				"philosophers or a maximum meal count of zero\n", 3));
+		return (ft_error("philo_bonus: simulation cannot proceed with "
+				"zero philosophers or a maximum meal count of zero\n", 3));
 	return (0);
 }
 
