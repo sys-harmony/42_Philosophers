@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:09:12 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 13:12:12 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/15 13:31:33 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ static void	ft_write_state_debug(t_ps state, t_philo *philo)
 		printf("%6ld | Philo No.%d (ID %d) has taken the 2nd fork\n"
 			"%6ld | Philo No.%d (ID %d) is eating meal No.%ld\n",
 			ft_elapsed_time(philo), philo->id + 1, philo->id,
-			ft_elapsed_time(philo), philo->id + 1, philo->id, philo->meal_ct + 1);
+			ft_elapsed_time(philo), philo->id + 1, philo->id,
+			philo->meal_ct + 1);
 	else if (state == SLEEPING)
 		printf("%6ld | Philo No.%d (ID %d) is sleeping\n",
 			ft_elapsed_time(philo), philo->id + 1, philo->id);
@@ -54,10 +55,12 @@ void	ft_write_state(t_ps state, t_philo *philo)
 	if (DEBUG_MODE)
 		ft_write_state_debug(state, philo);
 	else if (state == TAKING_FIRST_FORK)
-		printf("%ld %d has taken a fork\n", ft_elapsed_time(philo), philo->id + 1);
+		printf("%ld %d has taken a fork\n",
+			ft_elapsed_time(philo), philo->id + 1);
 	else if (state == TAKING_SECOND_FORK_AND_EATING)
 		printf("%ld %d has taken a fork\n" "%ld %d is eating\n",
-			ft_elapsed_time(philo), philo->id + 1, ft_elapsed_time(philo), philo->id + 1);
+			ft_elapsed_time(philo), philo->id + 1,
+			ft_elapsed_time(philo), philo->id + 1);
 	else if (state == SLEEPING)
 		printf("%ld %d is sleeping\n", ft_elapsed_time(philo), philo->id + 1);
 	else if (state == THINKING)
