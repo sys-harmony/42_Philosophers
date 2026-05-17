@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:08:52 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/16 18:01:21 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:49:29 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,26 +52,28 @@ long	ft_get_time(t_tc time_code)
 
 	if (gettimeofday(&tv, NULL) < 0)
 		return (ft_error("philo_bonus: gettimeofday failed\n", -1));
-	else if (time_code == MILLISECOND)
+	else if (time_code == MS)
 		return ((tv.tv_sec * 1e3) + tv.tv_usec / 1e3);
-	else if (time_code == MICROSECOND)
+	else if (time_code == US)
 		return ((tv.tv_sec * 1e6) + tv.tv_usec);
 	return (0);
 }
 
 void	ft_usleep(long sleep_time, t_data *data)
 {
-	const long	start_time = ft_get_time(MICROSECOND);
+	const long	start_time = ft_get_time(US);
 	const long	end_time = start_time + sleep_time;
 	long		current_time;
 	long		remaining_time;
 
+	if (start_time < 0)
+		ft_abort(data);
 	while (1)
 	{
-		current_time = ft_get_time(MICROSECOND);
-		remaining_time = end_time - current_time;
+		current_time = ft_get_time(US);
 		if (current_time < 0)
 			ft_abort(data);
+		remaining_time = end_time - current_time;
 		if (remaining_time <= 0)
 			break ;
 		else if (remaining_time > 500)
@@ -81,18 +83,15 @@ void	ft_usleep(long sleep_time, t_data *data)
 
 void	ft_cleanup(t_data *data)
 {
-	int	i;
-
-	ft_sem_remove(data->forks_sem, "/philo_forks");
-	ft_sem_remove(data->diners_sem, "/philo_diners");
-	ft_sem_remove(data->write_sem, "/philo_write");
-	ft_sem_remove(data->done_sem, "/philo_done");
-	ft_sem_remove(data->stop_sem, "/philo_stop");
+	ft_remove_sem(data->forks_sem, "/philo_forks");
+	ft_remove_sem(data->diners_sem, "/philo_diners");
+	ft_remove_sem(data->write_sem, "/philo_write");
+	ft_remove_sem(data->done_sem, "/philo_done");
+	ft_remove_sem(data->stop_sem, "/philo_stop");
 	if (data->philo)
 	{
-		i = -1;
-		while (++i < data->philo_nbr)
-			ft_sem_remove(data->philo[i].lock_sem, ft_sem_name(i));
+		if (data->philo_sem_init)
+			ft_remove_philo_sems(data->philo_nbr, data);
 		free(data->philo);
 	}
 	if (data->pid)

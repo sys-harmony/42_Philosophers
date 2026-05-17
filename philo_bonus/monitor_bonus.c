@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:09:12 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 20:34:47 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 13:23:13 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ft_abort(t_data *data)
 
 static long	ft_elapsed_time(t_philo *philo)
 {
-	const long	current_time = ft_get_time(MILLISECOND);
+	const long	current_time = ft_get_time(MS);
 
 	if (current_time < 0)
 		ft_abort(philo->data);
@@ -83,7 +83,7 @@ void	*ft_monitor(void *arg)
 	while (1)
 	{
 		last_meal_time = ft_sem_get(philo->lock_sem, &philo->last_meal_time);
-		current_time = ft_get_time(MILLISECOND);
+		current_time = ft_get_time(MS);
 		if (current_time < 0)
 			ft_abort(d);
 		if (current_time - last_meal_time >= d->time_to_die / 1e3)

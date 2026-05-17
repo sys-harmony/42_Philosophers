@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:05:04 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 13:24:36 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:16:59 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ void	ft_write_state(t_ps state, t_philo *philo)
 	long	current_time;
 
 	pthread_mutex_lock(&philo->data->write_mutex);
-	current_time = ft_get_time(MILLISECOND, philo->data);
-	if (current_time >= 0 && (!ft_sim_is_over(philo->data) || state == DIED))
+	current_time = ft_get_time(MS, philo->data);
+	if (!ft_sim_is_over(philo->data) || state == DIED)
 	{
 		elapsed_time = current_time - philo->data->start_time;
 		if (DEBUG_MODE)
@@ -60,35 +60,37 @@ void	ft_write_state(t_ps state, t_philo *philo)
 	pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
-static void	ft_fed_or_dead(t_data *d, t_philo *philo, long time_since_last_meal)
+static void	ft_fed_or_dead(t_philo *philo, long last_meal_time, int is_full)
 {
-	int	all_full;
-	int	i;
+	long	current_time;
 
-	if (time_since_last_meal >= d->time_to_die / 1e3
-		&& !ft_mutex_get(&philo->mutex, &philo->is_full))
+	current_time = ft_get_time(MS, philo->data);
+	if (ft_sim_is_over(philo->data))
+		return ;
+	if (current_time - last_meal_time >= philo->data->time_to_die / 1e3
+		&& !is_full)
 	{
-		ft_mutex_set(&d->state_mutex, &d->end_sim, 1);
+		ft_mutex_set(&philo->data->state_mutex, &philo->data->end_sim, 1);
 		ft_write_state(DIED, philo);
 		return ;
 	}
-	if (d->max_meals > 0)
-	{
-		all_full = 1;
-		i = -1;
-		while (++i < d->philo_nbr)
-			if (!ft_mutex_get(&d->philo[i].mutex, &d->philo[i].is_full))
-				all_full = 0;
-		if (all_full)
-			ft_mutex_set(&d->state_mutex, &d->end_sim, 1);
-	}
+}
+
+static void	ft_get_philo_state(t_philo *philo,
+											long *last_meal_time, long *is_full)
+{
+	pthread_mutex_lock(&philo->mutex);
+	*last_meal_time = philo->last_meal_time;
+	*is_full = philo->is_full;
+	pthread_mutex_unlock(&philo->mutex);
 }
 
 void	*ft_monitor(void *data)
 {
 	t_data	*d;
-	long	current_time;
 	long	last_meal_time;
+	long	is_full;
+	int		full_count;
 	int		i;
 
 	d = (t_data *)data;
@@ -97,15 +99,16 @@ void	*ft_monitor(void *data)
 	while (!ft_sim_is_over(d))
 	{
 		i = -1;
-		while (++i < d->philo_nbr)
+		full_count = 0;
+		while (++i < d->philo_nbr && !ft_sim_is_over(d))
 		{
-			current_time = ft_get_time(MILLISECOND, d);
-			if (ft_sim_is_over(d))
-				return (NULL);
-			last_meal_time = ft_mutex_get(&d->philo[i].mutex,
-					&d->philo[i].last_meal_time);
-			ft_fed_or_dead(d, &d->philo[i], current_time - last_meal_time);
+			ft_get_philo_state(&d->philo[i], &last_meal_time, &is_full);
+			ft_fed_or_dead(&d->philo[i], last_meal_time, is_full);
+			if (is_full)
+				full_count++;
 		}
+		if (d->max_meals > 0 && full_count == d->philo_nbr)
+			ft_mutex_set(&d->state_mutex, &d->end_sim, 1);
 		usleep(250);
 	}
 	return (NULL);

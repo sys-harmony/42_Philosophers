@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:09:06 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/16 18:04:46 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:49:10 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ struct s_data
 	long		think_time;
 	long		max_meals;
 	long		start_time;
+	long		philo_sem_init;
 	sem_t		*forks_sem;
 	sem_t		*diners_sem;
 	sem_t		*write_sem;
@@ -72,8 +73,8 @@ typedef enum e_philo_state
 
 typedef enum e_time_code
 {
-	MILLISECOND,
-	MICROSECOND
+	MS,
+	US
 }	t_tc;
 
 // sim_bonus.c
@@ -86,9 +87,10 @@ void	ft_abort(t_data *data);
 
 // sem_bonus.c
 char	*ft_sem_name(int id);
+void	ft_remove_sem(sem_t *sem, const char *sem_name);
+void	ft_remove_philo_sems(int n, t_data *data);
 void	ft_sem_set(sem_t *sem, long *dest, long value);
 long	ft_sem_get(sem_t *sem, long *value);
-void	ft_sem_remove(sem_t *sem, const char *sem_name);
 
 // utils_bonus.c
 long	ft_atol_s(const char *nptr);

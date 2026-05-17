@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 11:08:57 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/16 18:01:32 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:41:23 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,25 @@
 
 static void	ft_eat(t_philo *philo)
 {
+	t_data	*d;
 	long	last_meal_time;
 
-	sem_wait(philo->data->diners_sem);
-	sem_wait(philo->data->forks_sem);
+	d = philo->data;
+	sem_wait(d->diners_sem);
+	sem_wait(d->forks_sem);
 	ft_write_state(TAKING_FIRST_FORK, philo);
-	sem_wait(philo->data->forks_sem);
-	last_meal_time = ft_get_time(MILLISECOND);
+	sem_wait(d->forks_sem);
+	last_meal_time = ft_get_time(MS);
 	if (last_meal_time < 0)
 		ft_abort(philo->data);
 	ft_sem_set(philo->lock_sem, &philo->last_meal_time, last_meal_time);
 	ft_write_state(TAKING_SECOND_FORK_AND_EATING, philo);
-	if (++philo->meal_ct == philo->data->max_meals
-		&& philo->data->max_meals > 0)
-		sem_post(philo->data->done_sem);
-	ft_usleep(philo->data->time_to_eat, philo->data);
-	sem_post(philo->data->forks_sem);
-	sem_post(philo->data->forks_sem);
-	sem_post(philo->data->diners_sem);
+	if (++philo->meal_ct == d->max_meals)
+		sem_post(d->done_sem);
+	ft_usleep(d->time_to_eat, d);
+	sem_post(d->forks_sem);
+	sem_post(d->forks_sem);
+	sem_post(d->diners_sem);
 }
 
 static void	ft_dinner(t_philo *philo)
@@ -41,7 +42,7 @@ static void	ft_dinner(t_philo *philo)
 	d = philo->data;
 	ft_sem_set(philo->lock_sem, &philo->last_meal_time, d->start_time);
 	if (pthread_create(&philo->thread, NULL, ft_monitor, philo))
-		ft_abort(philo->data);
+		ft_abort(d);
 	pthread_detach(philo->thread);
 	if (philo->id % 2)
 		usleep(500);
@@ -68,7 +69,10 @@ static int	ft_start_processes(t_data *data)
 		{
 			ft_error("philo_bonus: fork failed\n", 1);
 			while (i--)
+			{
 				kill(data->pid[i], SIGKILL);
+				waitpid(data->pid[i], NULL, 0);
+			}
 			return (1);
 		}
 		else if (data->pid[i] == 0)
@@ -94,26 +98,28 @@ static void	*ft_wait_all_meals(void *arg)
 int	ft_sim(t_data *data)
 {
 	pthread_t	waiter_thread;
+	int			ret;
 	int			i;
 
-	data->start_time = ft_get_time(MILLISECOND);
-	if (data->start_time < 0)
+	data->start_time = ft_get_time(MS);
+	if (data->start_time < 0 || ft_start_processes(data))
 		return (1);
-	if (ft_start_processes(data))
-		return (1);
-	if (pthread_create(&waiter_thread, NULL, ft_wait_all_meals, data))
-		return (1);
+	ret = pthread_create(&waiter_thread, NULL, ft_wait_all_meals, data);
+	if (ret)
+	{
+		ft_error("philo_bonus: pthread_create failed\n", 1);
+		sem_post(data->stop_sem);
+	}
 	sem_wait(data->stop_sem);
-	i = -1;
-	while (++i < data->philo_nbr)
-		kill(data->pid[i], SIGKILL);
+	i = 0;
+	while (i < data->philo_nbr)
+		kill(data->pid[i++], SIGKILL);
 	sem_post(data->write_sem);
-	i = -1;
-	while (++i < data->philo_nbr)
+	while (i--)
 		sem_post(data->done_sem);
-	pthread_join(waiter_thread, NULL);
-	i = -1;
+	if (!ret)
+		pthread_join(waiter_thread, NULL);
 	while (++i < data->philo_nbr)
 		waitpid(-1, NULL, 0);
-	return (0);
+	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 13:34:54 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 18:46:11 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:45:16 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ typedef enum e_philo_state
 
 typedef enum e_time_code
 {
-	MILLISECOND,
-	MICROSECOND
+	MS,
+	US
 }	t_tc;
 
 // sim.c

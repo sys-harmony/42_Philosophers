@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 13:34:45 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/16 18:01:06 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 12:21:18 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,12 @@ static int	ft_philo_init(t_data *data)
 		sem_unlink(name);
 		data->philo[i].lock_sem = sem_open(name, O_CREAT, 0644, 1);
 		if (data->philo[i].lock_sem == SEM_FAILED)
+		{
+			ft_remove_philo_sems(i, data);
 			return (ft_error("philo_bonus: sem_open failed\n", 1));
+		}
 	}
+	data->philo_sem_init = 1;
 	return (0);
 }
 

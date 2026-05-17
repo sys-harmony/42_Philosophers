@@ -6,7 +6,7 @@
 /*   By: gdosch <gdosch@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:48:14 by gdosch            #+#    #+#             */
-/*   Updated: 2026/05/15 18:05:31 by gdosch           ###   ########.fr       */
+/*   Updated: 2026/05/17 10:40:33 by gdosch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,23 +55,23 @@ long	ft_get_time(t_tc time_code, t_data *data)
 		ft_mutex_set(&data->state_mutex, &data->end_sim, 1);
 		return (ft_error("philo: gettimeofday failed\n", -1));
 	}
-	else if (time_code == MILLISECOND)
+	else if (time_code == MS)
 		return ((tv.tv_sec * 1e3) + tv.tv_usec / 1e3);
-	else if (time_code == MICROSECOND)
+	else if (time_code == US)
 		return ((tv.tv_sec * 1e6) + tv.tv_usec);
 	return (0);
 }
 
 void	ft_usleep(long sleep_time, t_data *data)
 {
-	const long	start_time = ft_get_time(MICROSECOND, data);
+	const long	start_time = ft_get_time(US, data);
 	const long	end_time = start_time + sleep_time;
 	long		current_time;
 	long		remaining_time;
 
 	while (1)
 	{
-		current_time = ft_get_time(MICROSECOND, data);
+		current_time = ft_get_time(US, data);
 		remaining_time = end_time - current_time;
 		if (ft_sim_is_over(data) || remaining_time <= 0)
 			break ;
