@@ -88,7 +88,7 @@ void	ft_abort(t_data *data);
 // sem_bonus.c
 char	*ft_sem_name(int id);
 void	ft_remove_sem(sem_t *sem, const char *sem_name);
-void	ft_remove_philo_sems(int n, t_data *data);
+void	ft_remove_all_sems(int n, t_data *data);
 void	ft_sem_set(sem_t *sem, long *dest, long value);
 long	ft_sem_get(sem_t *sem, long *value);
 

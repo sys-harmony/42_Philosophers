@@ -60,7 +60,7 @@ void	ft_write_state(t_ps state, t_philo *philo)
 	pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
-static int	ft_fed_or_dead(t_philo *philo)
+static long	ft_fed_or_dead(t_philo *philo)
 {
 	long	current_time;
 	long	last_meal_time;
